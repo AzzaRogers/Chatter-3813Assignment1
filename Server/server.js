@@ -1,16 +1,23 @@
-
-
-var express = require("express"); 
-var app = express();
-var http = require("http").Server(app); 
-var bodyParser = require("body-parser");
-var cors = require("cors") //import the cors package.
+const express = require("express"); 
+const app = express();
+const cors = require("cors"); //import the cors package.
+const http = require("http").Server(app); 
+const io = require("socket.io")(http);
 
 app.use(cors()); // Add cors middleware to the express application
-app.use(bodyParser.json());
-app.use(express.static(__dirname + "/../dist/Chatter/"));
 
-// Start server, listen to port 3000 and log host and port
+//var bodyParser = require("body-parser");
+//app.use(bodyParser.json());
+//app.use(express.static(__dirname + "/../dist/Chatter/"));
+
+io.on("connection", (socket) => {
+    console.log("connection: " + socket.id);
+    socket.on("message",(message) => {
+        io.emit("message", message);
+    });
+});
+
+// Start server, listen to port 3000 and log host, port and date
 let server = http.listen(3000, function () {
     let host = server.address().address;
     let port = server.address().port;
@@ -18,16 +25,3 @@ let server = http.listen(3000, function () {
     console.log("Server listening on: " + host + " port: " + port + " At: " + date);
 });
 
-
-app.get("/test", function (req, res) {
-    console.log("/test");
-    if (!req.body) {
-        return res.sendStatus(400);        
-    }
-
-    var user = {}
-    user.email = req.body.email;
-    user.upwd = req.body.upwd;
-    
-    res.send(user);
-});
