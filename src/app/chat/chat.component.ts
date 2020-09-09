@@ -41,11 +41,6 @@ export class ChatComponent implements OnInit {
                 this.isInRoom = false;
             }
         })
-
-
-        // this.ioConnection = this.socketService.OnMessage().subscribe((message:string) => {
-        //     this.messages.push(message);
-        // });
     }
     public Chat() {
         if (this.messageContent) {
