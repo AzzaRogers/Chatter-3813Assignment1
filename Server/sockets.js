@@ -6,11 +6,14 @@ module.exports = {
         var socketsConnectedToRoom = [];
         var socketsPerRoom = [];
 
+        var lastErrorMessage = "";
+
         users = [{name: "super", email: "super@chatter.com", id: "", role: "superAdmin", loggedIn: false}];
+
+        var groups = [];
 
         io.on("connection", (socket) => {
             console.log("connection: " + socket.id);
-
             //
             //  User
             //
@@ -44,7 +47,108 @@ module.exports = {
                     }                    
                 }
             });
+            
+            socket.on("ErrorMessage", () => {
+                io.to(socket.id).emit("ErrorMessage", lastErrorMessage);
+                if(lastErrorMessage != "") {
+                    //console.log("Emitted Error Message" + lastErrorMessage);
+                }                                
+                lastErrorMessage = "";
+            });
+            
+            socket.on("GetUserList", () => {
+                io.emit("GetUserList", users);
+                //console.log("Emitted GetUserList" + JSON.stringify(users));
+            });
 
+            socket.on("GetGroupList", () => {
+                io.to(socket.id).emit("GetGroupList", groups);
+                //console.log("Emitted GetUserList" + JSON.stringify(users));
+            });
+            socket.on("GetTheGroupList", () => {
+                io.to(socket.id).emit("GetTheGroupList", groups);
+                //console.log("Emitted GetTheUserList" + JSON.stringify(users));
+            });
+
+            socket.on("CreateNewGroup", (groupName) => {
+                let isValid = true;
+                for (i=0; i<groups.length; i++) {
+                    if (groups[i].name == groupName) {  
+                        isValid = false;     
+                        lastErrorMessage = "That Group name is already taken, please try another name";                 
+                    }                    
+                }
+                if (isValid) {
+                    console.log("Create New Group: " + groupName);
+
+                    var tgroups = {name: groupName, members: [], rooms: [] };
+
+                    groups.push(tgroups);
+                }
+            });
+            
+
+            socket.on("CreateNewRoom", (roomName, addToGroup) => {                
+                for (i=0; i<groups.length; i++) {
+                    if (groups[i].name == addToGroup) {                          
+                        groups[i].rooms.push(roomName);  
+                        rooms.push(roomName);  
+                        lastErrorMessage = "Added room: " + roomName + " to group: " + addToGroup;                                         
+                    }                    
+                }
+                console.log("group updated: " + JSON.stringify(groups))
+            });
+
+            socket.on("AddUserToGroup", (userName, groupName) => {
+                for (i=0; i<groups.length; i++) {
+                    if (groups[i].name == groupName) { 
+                        let isValid = true;
+                        for (j=0; j < groups[i].members.length; j++) {
+                            if (groups[i].members[j] == userName) {
+                                console.log("User already part of group")
+                                lastErrorMessage = userName + " is already part of " + groupName;  
+                                isValid = false;                                
+                            }
+                        } 
+                        if(isValid) {
+                            groups[i].members.push(userName)
+                            console.log("group updated: " + JSON.stringify(groups[i]))
+                            break;
+                        }
+                    }                    
+                }
+                
+            });
+
+            socket.on("CreateNewUser", (user) => {
+                let isValid = true;
+                for (i=0; i<users.length; i++) {
+                    if (users[i].name == user.name) {  
+                        isValid = false;     
+                        lastErrorMessage = "That user name is already taken, please try another name";                 
+                    }                    
+                }
+                if (isValid) {
+                    console.log("Create New User: " + JSON.stringify(user))
+                    users.push(user);
+                }
+            });
+
+            socket.on("DeleteUser", (username) => {
+                for (i=0; i<users.length; i++) {
+                    if (users[i].name == username) {  
+                        console.log("--->"+users[i].LoggedIn)
+                        if(users[i].loggedIn) {
+                            lastErrorMessage = "User: " + username + "cant be deleted while logged in.";     
+                        } else {
+                            //delete users[i];
+                            users.splice(i,1);
+                            console.log("allusers: " + JSON.stringify(users))
+                            lastErrorMessage = "User: " + username + " is deleted.";     
+                        }
+                    }                    
+                }
+            });
             //
             //  Chat
             //

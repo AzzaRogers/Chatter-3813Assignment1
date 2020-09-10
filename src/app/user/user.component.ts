@@ -12,21 +12,35 @@ export class UserComponent implements OnInit {
     isLoggedIn;
     currentUser;
 
+    ErrorMessage = "";
+
     // input vars
-    loginUsername = "";
+    loginUsername:string = "";
+    newUserName:string = "";
+    newUserEmail:string = "";
+    newUserRole:string = "";
+    newGroupName:string = "";
+
+    userToAdd:string = "";
+    addToGroup:string = "";
+
+    userToDelete:string = "";
+
+    newRoomName:string = "";
 
     constructor(private socketService: SocketService, private dataService: DatastorageService) { }
 
     ngOnInit(): void {
-        console.log("isLoggedIn: " + this.isLoggedIn);
-        console.log("currentUser: " + JSON.stringify(this.currentUser));
         this.isLoggedIn = this.dataService.GetItem("isLoggedIn");
-        this.currentUser = JSON.parse(this.dataService.GetItem("currentUser"));
+        this.currentUser = JSON.parse(this.dataService.GetItem("currentUser"));        
         if (this.currentUser != null) {
+            this.dataService.GetValidRooms(this.currentUser.name);
             this.isLoggedIn = true;
-            console.log("    1: " + JSON.stringify(this.currentUser));
-            console.log("    1: " + this.isLoggedIn);
-        }
+            if(this.currentUser.role == "groupAdmin" || this.currentUser.role == "superAdmin") {
+                this.dataService.GetUserList();
+                this.dataService.GetGroupList();
+            }
+        } 
     }
 
     login() {
@@ -45,6 +59,8 @@ export class UserComponent implements OnInit {
                         this.dataService.SetItem("isLoggedIn",this.isLoggedIn);
                         this.dataService.SetItem("currentUser",JSON.stringify(this.currentUser));
                         console.log("ID: " + this.socketService.GetID())
+                        this.dataService.GetGroupList();
+                        window.location.reload();
                     } else {
                         alert("This user is already Loggedin")
                     }
@@ -61,6 +77,53 @@ export class UserComponent implements OnInit {
         this.currentUser = [];
         this.dataService.RemoveItem("isLoggedIn");
         this.dataService.RemoveItem("currentUser");
+        window.location.reload();
+    }
 
+    CreateUser() {
+        var newUser = {name: this.newUserName, email: this.newUserEmail, id: "", role: this.newUserRole, loggedIn: false};
+        this.socketService.CreateNewUser(newUser);
+        this.socketService.ReqError();
+        this.socketService.GetError((msg) => {this.ErrorMessage = msg});
+        this.dataService.GetUserList();
+        this.newUserName= "";
+        this.newUserEmail = "";
+        this.newUserRole= "";
+    }
+
+    CreateGroup() {
+        this.socketService.CreateNewGroup(this.newGroupName);
+        this.socketService.ReqError();
+        this.socketService.GetError((msg) => {this.ErrorMessage = msg});
+        this.dataService.GetGroupList();
+        this.newGroupName= "";
+    }
+
+    AddUserToGroup() {        
+        console.log("addtogroup" + this.userToAdd + "    " + this.addToGroup)
+        this.socketService.AddUserToGroup(this.userToAdd, this.addToGroup)
+        this.socketService.ReqError();
+        this.socketService.GetError((msg) => {this.ErrorMessage = msg});
+        this.ErrorMessage = "User: " + this.userToAdd + " was added too " + this.addToGroup;
+    }
+
+    CreateRoom() {
+        
+        this.ErrorMessage = "Room: " + this.userToAdd + " was added too " + this.addToGroup;
+        console.log("createRoom" + this.userToAdd + "    " + this.addToGroup);
+
+        this.socketService.CreateNewRoom(this.newRoomName, this.addToGroup);
+
+        this.newRoomName = "";
+        this.addToGroup = "";
+
+        this.socketService.ReqError();
+        this.socketService.GetError((msg) => {this.ErrorMessage = msg});
+    }
+
+    DeleteUser() {
+        this.socketService.DeleteUser(this.userToDelete)
+        this.socketService.ReqError();
+        this.socketService.GetError((msg) => {this.ErrorMessage = msg});
     }
 }

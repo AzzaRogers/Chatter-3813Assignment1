@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService } from "../services/socket.service"
+import { DatastorageService } from "../services/datastorage.service"
 import { FormsModule } from "@angular/forms"
 
 
@@ -22,17 +23,28 @@ export class ChatComponent implements OnInit {
     messageContent:string = "";
     newRoomName:string = "";
 
-    constructor(private socketService:SocketService) { }
+    isLoggedIn;
+    currentUser;
+
+    constructor(private socketService:SocketService, private dataService: DatastorageService) { }
 
     ngOnInit() {        
         this.initIoConnection();
+        this.isLoggedIn = this.dataService.GetItem("isLoggedIn");
+        this.currentUser = this.dataService.GetItem("currentUser");
+        this.rooms = this.dataService.rooms;
+        console.log("ngOnInit chat: " + JSON.stringify(this.dataService.rooms) + " - " + this.rooms);
     }
+
+    
 
     private initIoConnection() {
         this.socketService.InitSocket();
         this.socketService.GetMessage((msg) => {this.messages.push(msg)});
-        this.socketService.RequestRoomList();
-        this.socketService.GetRoomList((msg) => {this.rooms = JSON.parse(msg)});
+        //this.socketService.RequestRoomList();
+        //this.socketService.GetRoomList((msg) => {this.rooms = JSON.parse(msg)});
+        this.rooms = this.dataService.rooms;
+
         this.socketService.Joined((msg) => {
             this.currentRoom = msg;
             if (this.currentRoom != "") {
@@ -66,10 +78,10 @@ export class ChatComponent implements OnInit {
         this.numberOfUsers = 0;
         this.messages = []
     }
-    CreateRoom() {
-        this.socketService.CreateRoom(this.newRoomName);
-        this.socketService.RequestRoomList();
-        this.newRoomName = "";
+    RefreshRooms() {
+        this.rooms = this.dataService.rooms;
+        console.log("RefreshRooms Chat: " + JSON.stringify(this.dataService.rooms) + " - " + this.rooms);
+        window.location.reload();
     }
 
 }

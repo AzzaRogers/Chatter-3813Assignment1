@@ -1,17 +1,165 @@
 <div class="container">
     <form>
+        <form *ngIf="!isLoggedIn">
+            <label for="loginUsername">Username:</label>
+            <input type="text" [(ngModel)]="loginUsername" name="loginUsername" id="loginUsername"/>
+            <button (click)="login()" class="btn btn-primary">Login</button>
+        </form>
         <form *ngIf="isLoggedIn">
             <strong>Username:</strong> {{currentUser.name}}<br>
             <strong>User Email: </strong>{{currentUser.email}}<br>
             <strong>User ID: </strong>  {{currentUser.id}}<br>
             <strong>User Role: </strong>{{currentUser.role}}<br>
             <button (click)="Logout()" class="btn btn-primary">Logout</button>
+            <form *ngIf="currentUser.role == 'superAdmin'">
+                <hr>
+                <h3>Create New User</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newUserName">User Name:</label>
+                <input type="text" [(ngModel)]="newUserName" name="newUserName" id="newUserName"/><br>
+
+                <label for="newUserEmail">User Email:</label>
+                <input type="text" [(ngModel)]="newUserEmail" name="newUserEmail" id="newUserEmail"/><br>
+                
+                <label for="newUserRole">User Role:</label>
+                <select [(ngModel)]="newUserRole" name="newUserRole">
+                    <option value="groupAdmin">Group Admin</option>
+                    <option value="groupAssist">Group Assistant</option>
+                    <option value="user">User</option>
+                </select><br>
+
+                <button (click)="CreateUser()" class="btn btn-primary">Create New User</button>
+                <hr>
+
+                <h3>Delete User</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+
+                <label for="userToDelete">User to Delete:</label>
+                <select [(ngModel)]="userToDelete" name="userToDelete">
+                    <option *ngFor="let user of this.dataService.users" value="{{user.name}}">{{user.name}}</option>
+                </select><br>
+
+                <button (click)="DeleteUser()" class="btn btn-primary">Delete User</button>
+                <hr>
+
+
+                <h3>Create New Group</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newGroupName">New Group Name:</label>
+                <input type="text" [(ngModel)]="newGroupName" name="newGroupName" id="newGroupName"/><br>
+
+                <button (click)="CreateGroup()" class="btn btn-primary">Create New Group</button>
+                <hr>
+
+                <h3>Add user to Group</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+
+                <label for="userToAdd">User to Add:</label>
+                <select [(ngModel)]="userToAdd" name="userToAdd">
+                    <option *ngFor="let user of this.dataService.users" value="{{user.name}}">{{user.name}}</option>
+                </select><br>
+
+                <label for="addToGroup">Group to add to:</label>
+                <select [(ngModel)]="addToGroup" name="addToGroup">
+                    <option *ngFor="let group of this.dataService.groups" value="{{group.name}}">{{group.name}}</option>
+                </select><br>
+                <button (click)="AddUserToGroup()" class="btn btn-primary">Add user to group</button>
+                <hr>
+
+                <h3>Create New Channel</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newRoomName">New Room Name:</label>
+                <input type="text" [(ngModel)]="newRoomName" name="newRoomName" id="newRoomName"/><br>
+
+                <label for="addToGroup">Group to add to:</label>
+                <select [(ngModel)]="addToGroup" name="addToGroup">
+                    <option *ngFor="let group of this.dataService.groups" value="{{group.name}}">{{group.name}}</option>
+                </select><br>
+
+                <button (click)="CreateRoom()" class="btn btn-primary">Create New Room</button>
+                <hr>
+
+            </form>
+
+            <form *ngIf="currentUser.role == 'groupAdmin'">
+                <hr>
+                <h3>Create New User</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newUserName">User Name:</label>
+                <input type="text" [(ngModel)]="newUserName" name="newUserName" id="newUserName"/><br>
+
+                <label for="newUserEmail">User Email:</label>
+                <input type="text" [(ngModel)]="newUserEmail" name="newUserEmail" id="newUserEmail"/><br>
+                
+                <label for="newUserRole">User Role:</label>
+                <select [(ngModel)]="newUserRole" name="newUserRole">
+                    <option value="groupAssist">Group Assistant</option>
+                    <option value="user">User</option>
+                </select><br>
+
+                <button (click)="CreateUser()" class="btn btn-primary">Create New User</button>
+                <hr>
+
+                <h3>Create New Group</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newGroupName">New Group Name:</label>
+                <input type="text" [(ngModel)]="newGroupName" name="newGroupName" id="newGroupName"/><br>
+
+                <button (click)="CreateGroup()" class="btn btn-primary">Create New Group</button>
+                <hr>
+
+                <h3>Add user to Group</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+
+                <label for="userToAdd">User to Add:</label>
+                <select [(ngModel)]="userToAdd" name="userToAdd">
+                    <option *ngFor="let user of this.dataService.users" value="{{user.name}}">{{user.name}}</option>
+                </select><br>
+
+                <label for="addToGroup">Group to add to:</label>
+                <select [(ngModel)]="addToGroup" name="addToGroup">
+                    <option *ngFor="let group of this.dataService.groups" value="{{group.name}}">{{group.name}}</option>
+                </select><br>
+                <button (click)="AddUserToGroup()" class="btn btn-primary">Add user to group</button>
+                <hr>
+
+                <h3>Create New Channel</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newRoomName">New Room Name:</label>
+                <input type="text" [(ngModel)]="newRoomName" name="newRoomName" id="newRoomName"/><br>
+
+                <label for="addToGroup">Group to add to:</label>
+                <select [(ngModel)]="addToGroup" name="addToGroup">
+                    <option *ngFor="let group of this.dataService.groups" value="{{group.name}}">{{group.name}}</option>
+                </select><br>
+
+                <button (click)="CreateRoom()" class="btn btn-primary">Create New Room</button>
+                <hr>
+
+            </form>
+
+            <form *ngIf="currentUser.role == 'groupAssist'">
+                <hr>
+                <h3>Create New User</h3>
+                <h4 *ngIf="this.ErrorMessage != ''">{{this.ErrorMessage}}</h4>
+                <label for="newUserName">User Name:</label>
+                <input type="text" [(ngModel)]="newUserName" name="newUserName" id="newUserName"/><br>
+
+                <label for="newUserEmail">User Email:</label>
+                <input type="text" [(ngModel)]="newUserEmail" name="newUserEmail" id="newUserEmail"/><br>
+                
+                <label for="newUserRole">User Role:</label>
+                <select [(ngModel)]="newUserRole" name="newUserRole">
+                    <option value="groupAdmin">Group Admin</option>
+                    <option value="groupAssist">Group Assistant</option>
+                    <option value="user">User</option>
+                </select><br>
+
+                <button (click)="CreateUser()" class="btn btn-primary">Create New User</button>
+                <hr>
+            </form>
         </form>
-        <form *ngIf="!isLoggedIn">
-            <label for="loginUsername">USername:</label>
-            <input type="text" [(ngModel)]="loginUsername" name="loginUsername" id="loginUsername"/>
-            <button (click)="login()" class="btn btn-primary">Login</button>
-        </form>
+
     </form>
     <hr />
 </div>

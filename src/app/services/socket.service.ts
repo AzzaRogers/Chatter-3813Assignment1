@@ -38,6 +38,59 @@ export class SocketService {
         this.socket.emit("Logout", username);
         console.log("Logout username: " + username);
     }
+
+    public CreateNewUser(user) {
+        this.socket.emit("CreateNewUser", user);
+        console.log("CreateNewUser emitted: " + JSON.stringify(user));
+    }
+
+    public DeleteUser(username) {
+        this.socket.emit("DeleteUser", username);
+        console.log("Delete User emitted: " + JSON.stringify(username));
+    }
+
+    public CreateNewGroup(groupName) {
+        this.socket.emit("CreateNewGroup", groupName);
+        console.log("CreateNewGroup emitted: " + groupName);
+    }
+    public CreateNewRoom(newRoomName, addToGroup){ 
+        this.socket.emit("CreateNewRoom", newRoomName, addToGroup);
+        console.log("CreateNewRoom emitted: " + newRoomName + "  -  " + addToGroup);
+    }
+
+    public AddUserToGroup(userName, groupName) {
+        this.socket.emit("AddUserToGroup", userName, groupName);
+    }
+
+    public ReqGroupList() {
+        this.socket.emit("GetGroupList", "");
+    }
+
+    public GetGroupList(callback) {
+        this.socket.on("GetGroupList", res => callback(res));
+    }
+    
+    public ReqTheGroupList() {
+        this.socket.emit("GetTheGroupList", "");
+    }
+    public GetTheGroupList(callback) {
+        this.socket.on("GetTheGroupList", res => callback(res));
+    }
+    public ReqUserList() {
+        this.socket.emit("GetUserList", "");
+    }
+
+    public GetUserList(callback) {
+        this.socket.on("GetUserList", res => callback(res));
+    }
+    
+    public ReqError() {
+        this.socket.emit("ErrorMessage", "");
+    }
+
+    public GetError(callback) {
+        this.socket.on("ErrorMessage", res => callback(res));
+    }
     //
     //  Chat
     //

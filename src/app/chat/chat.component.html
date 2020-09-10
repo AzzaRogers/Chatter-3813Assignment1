@@ -1,6 +1,7 @@
-<div class="container">
+<div class="container" *ngIf="isLoggedIn">
     <form>
         <div class="form-group" *ngIf="isInRoom">
+            Chat Messages for {{currentRoom}} - {{numberOfUsers}} Active users:
             <label for="messageContent">New Message</label>
             <input type="text" [(ngModel)]="messageContent" name="messageContent" id="messageContent"
                 class="form-control" />
@@ -9,21 +10,17 @@
             <button *ngIf="isInRoom" (click)="Chat()" class="btn btn-primary">Chat</button>
             <button *ngIf="!isInRoom" (click)="JoinRoom()" class="btn btn-primary">Join Room</button>
             <button *ngIf="isInRoom" (click)="LeaveRoom()" class="btn btn-primary">Leave Room</button>
+            <button (click)="RefreshRooms()" class="btn btn-primary">Refresh Channels</button>
         </div>
 
-        <select [(ngModel)]="selectedRoom" name="selectedRoom">
-            <option [ngValue]="null">Select Room</option>
+        <select *ngIf="!isInRoom" [(ngModel)]="selectedRoom" name="selectedRoom">
+            <option [ngValue]="null">Select Channel</option>
             <option *ngFor="let room of rooms">
                 {{room}}
             </option>
         </select>
-
-        <label for="newRoomName">New Room</label>
-        <input type="text" [(ngModel)]="newRoomName" name="newRoomName" id="newRoomName" class="form-control" />
-        <button (click)="CreateRoom()" class="btn btn-primary">Create New Room</button>
-
     </form>
-    Chat Messages for {{currentRoom}} - {{numberOfUsers}} Active users:
+    
     <ul>
         <li *ngFor="let message of messages">{{message}}</li>
     </ul>
