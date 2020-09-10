@@ -16,9 +16,6 @@ export class UserComponent implements OnInit {
     // input vars
     loginUsername = "";
 
-
-
-
     constructor(private socketService: SocketService) { }
 
     ngOnInit(): void {
