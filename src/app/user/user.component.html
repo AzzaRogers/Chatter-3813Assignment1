@@ -1,0 +1,16 @@
+<div class="container">
+    <form>
+        <form *ngIf="isLoggedIn">
+            <strong>Username:</strong> {{currentUser.name}}<br>
+            <strong>User Email: </strong>{{currentUser.email}}<br>
+            <strong>User ID:</strong> <br>
+            <strong>User Role: </strong>{{currentUser.role}}<br>
+        </form>
+        <form *ngIf="!isLoggedIn">
+            <label for="loginUsername">USername:</label>
+            <input type="text" [(ngModel)]="loginUsername" name="loginUsername" id="loginUsername"/>
+            <button (click)="login()" class="btn btn-primary">Login</button>
+        </form>
+    </form>
+    <hr />
+</div>

@@ -1,3 +1,5 @@
+// Start dev, with nodemon: npm run start:dev
+
 const express = require("express"); 
 const app = express();
 const cors = require("cors"); //import the cors package.

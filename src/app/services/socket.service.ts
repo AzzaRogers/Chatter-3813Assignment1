@@ -14,6 +14,24 @@ export class SocketService {
     private socket;
     constructor() { }
 
+    // TODO: change user and chat functionality to namespaces for easy of use and understandability
+
+
+    //
+    //  User
+    //  
+    public ReqLogin(username) {
+        this.socket.emit("login", username);
+        console.log("Login Request emited with username: " + username);
+    }
+
+    public GetLogin(callback) {
+        console.log("Login Request recieved");
+        this.socket.on("login", res => callback(res));
+    }
+    //
+    //  Chat
+    //
     public InitSocket(): void {
         this.socket = io(SERVER_URL);
     }

@@ -6,8 +6,37 @@ module.exports = {
         var socketsConnectedToRoom = [];
         var socketsPerRoom = [];
 
+        users = [{name: "super", email: "super@chatter.com", id: "", role: "superAdmin"}];
+
         io.on("connection", (socket) => {
             console.log("connection: " + socket.id);
+
+            //
+            //  User
+            //
+            socket.on("login", (username) => {
+                validLogin = false;
+                console.log("Login attempt by " + username)
+                for (i=0; i<users.length; i++) {
+                    console.log("Checking: " + users[i].name + " against " + username);
+                    if (users[i].name == username) {                        
+                        users[i].id = socket.id;
+                        console.log("Emitted: " + JSON.stringify(users[i]))
+                        io.emit("login", users[i]);
+                        console.log(username + " has logged in with an ID of: " + socket.id);
+                        validLogin = true;
+                    }                    
+                }
+                if (validLogin == false) {
+                    console.log("bad Login");
+                    io.emit("login", "BadLogin");
+                }
+            });
+
+
+            //
+            //  Chat
+            //
 
             socket.on("message", (message) => {
                 for (i=0; i<socketsConnectedToRoom.length; i++) {
