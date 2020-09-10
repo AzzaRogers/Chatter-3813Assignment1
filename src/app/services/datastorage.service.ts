@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SocketService } from "../services/socket.service"
 
-//var fs = require('fs');
-
 @Injectable({
   providedIn: 'root'
 })
@@ -11,7 +9,6 @@ export class DatastorageService {
     users = [];
     groups = [];
     rooms = [];
-    // channels = [];
 
     constructor(private socketService: SocketService) { }
 
@@ -91,11 +88,5 @@ export class DatastorageService {
             console.log("Storage Undefined");
         }     
     }
-    // WriteData() {
-    //     fs.writeFile("ClientData.txt", this.jsonData, function(err) {
-    //         if (err) {
-    //             console.log(err);
-    //         }
-    //     });
-    // }
+
 }

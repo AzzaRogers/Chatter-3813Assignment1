@@ -7,7 +7,7 @@ This project is a web app that was made for University Assignment. The goal of t
 ## Development server
 
 To Run the client webapp use `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-TO Run the server use npm start:dev, this will also start nodemon.
+TO Run the server use npm run start:dev, this will also start nodemon.
 
 ## Documention - Git
 The github repo is a single branch that has had functionality added each commit. Only functioning changes were saved and commited. A bottom up approach was used in the devolopment of this web app.
