@@ -3,8 +3,9 @@
         <form *ngIf="isLoggedIn">
             <strong>Username:</strong> {{currentUser.name}}<br>
             <strong>User Email: </strong>{{currentUser.email}}<br>
-            <strong>User ID:</strong> <br>
+            <strong>User ID: </strong>  {{currentUser.id}}<br>
             <strong>User Role: </strong>{{currentUser.role}}<br>
+            <button (click)="Logout()" class="btn btn-primary">Logout</button>
         </form>
         <form *ngIf="!isLoggedIn">
             <label for="loginUsername">USername:</label>

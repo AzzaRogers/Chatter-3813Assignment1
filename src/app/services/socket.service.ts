@@ -12,6 +12,10 @@ const SERVER_URL = "http://localhost:3000";
 
 export class SocketService {
     private socket;
+
+    public GetID() {
+        return this.socket.id;
+    }
     constructor() { }
 
     // TODO: change user and chat functionality to namespaces for easy of use and understandability
@@ -28,6 +32,11 @@ export class SocketService {
     public GetLogin(callback) {
         console.log("Login Request recieved");
         this.socket.on("login", res => callback(res));
+    }
+
+    public UserLogout(username) {
+        this.socket.emit("Logout", username);
+        console.log("Logout username: " + username);
     }
     //
     //  Chat

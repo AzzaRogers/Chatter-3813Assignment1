@@ -6,7 +6,7 @@ module.exports = {
         var socketsConnectedToRoom = [];
         var socketsPerRoom = [];
 
-        users = [{name: "super", email: "super@chatter.com", id: "", role: "superAdmin"}];
+        users = [{name: "super", email: "super@chatter.com", id: "", role: "superAdmin", loggedIn: false}];
 
         io.on("connection", (socket) => {
             console.log("connection: " + socket.id);
@@ -18,13 +18,14 @@ module.exports = {
                 validLogin = false;
                 console.log("Login attempt by " + username)
                 for (i=0; i<users.length; i++) {
-                    console.log("Checking: " + users[i].name + " against " + username);
-                    if (users[i].name == username) {                        
+                    if (users[i].name == username) {      
+                        console.log(" Already Logged in?: " + users[i].loggedIn)                  
                         users[i].id = socket.id;
-                        console.log("Emitted: " + JSON.stringify(users[i]))
-                        io.emit("login", users[i]);
+                        console.log("Emitted: " + JSON.stringify(users[i]))                        
+                        io.to(socket.id).emit("login", users[i]);
+                        users[i].loggedIn = true;
                         console.log(username + " has logged in with an ID of: " + socket.id);
-                        validLogin = true;
+                        validLogin = true;                        
                     }                    
                 }
                 if (validLogin == false) {
@@ -33,6 +34,16 @@ module.exports = {
                 }
             });
 
+            socket.on("Logout", (username) => {
+                for (i=0; i<users.length; i++) {
+                    if (users[i].name == username) {                        
+                        users[i].id = "";
+                        users[i].loggedIn = false;
+                        console.log(username + " has logged out");
+                    
+                    }                    
+                }
+            });
 
             //
             //  Chat
